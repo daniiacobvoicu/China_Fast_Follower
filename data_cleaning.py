@@ -38,6 +38,8 @@ if "GD_Deal_ID" in deal_attributes_df.columns and "GD_Deal_ID" in drug_details_d
 else:
     merged_df = deal_attributes_df
 
+merged_df['Announced_Date_x'] = pd.to_datetime(merged_df['Announced_Date_x'], errors='coerce')
+
 # Show dataset info
 print("Merged dataset shape:", merged_df.shape)
 merged_df.head()
