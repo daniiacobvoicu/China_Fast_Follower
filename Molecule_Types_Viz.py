@@ -10,6 +10,7 @@ molecule_type_percentages, molecule_type_by_year = analyze_molecule_types(file_p
 
 import ipywidgets as widgets
 from IPython.display import display
+import matplotlib.pyplot as plt
 
 # Get available years from the dataset
 available_years = sorted(molecule_type_by_year.index.get_level_values(0).unique().astype(int))
