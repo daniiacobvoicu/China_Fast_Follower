@@ -1,29 +1,37 @@
 
 import pandas as pd
 
-# Load the cleaned dataset
-file_path = "/content/drive/My Drive/China_Analysis/Cleaned_M_A_Dataset.csv"
-df = pd.read_csv(file_path)
+def analyze_molecule_types(file_path):
+    """
+    Loads the dataset, filters out blank Molecule_Types, and calculates the overall and per-year percentages.
+    
+    :param file_path: str, path to the dataset file
+    :return: tuple of (overall_percentages, per_year_percentages)
+    """
+    # Load dataset
+    file_path = "/content/drive/My Drive/China_Analysis/Cleaned_M_A_Dataset.csv"
+    df = pd.read_csv(file_path)
 
-# Drop the unnamed index column if present
-df = df.drop(columns=["Unnamed: 0"], errors="ignore")
+    # Drop the unnamed index column if present
+    df = df.drop(columns=["Unnamed: 0"], errors="ignore")
 
-# Convert Announced_Date_x to datetime
-df["Announced_Date_x"] = pd.to_datetime(df["Announced_Date_x"], errors="coerce")
+    # Convert Announced_Date_x to datetime
+    df["Announced_Date_x"] = pd.to_datetime(df["Announced_Date_x"], errors="coerce")
 
-# Extract year
-df["Year"] = df["Announced_Date_x"].dt.year
+    # Extract year
+    df["Year"] = df["Announced_Date_x"].dt.year
 
-# Get counts and percentages of Molecule Types overall
-molecule_type_counts = df["Molecule_Types"].value_counts(dropna=False)
-molecule_type_percentages = (molecule_type_counts / len(df)) * 100
+    # Drop rows where Molecule_Types is missing
+    df_filtered = df.dropna(subset=["Molecule_Types"])
 
-# Compute molecule type percentages per year
-molecule_type_by_year = df.groupby("Year")["Molecule_Types"].value_counts(normalize=True) * 100
+    # Compute overall molecule type percentages
+    molecule_type_counts = df_filtered["Molecule_Types"].value_counts()
+    total_count = len(df_filtered)
+    molecule_type_percentages = (molecule_type_counts / total_count) * 100
 
-# Display results
-print("Overall Molecule Type Percentages:")
-print(molecule_type_percentages)
+    # Compute molecule type percentages per year
+    molecule_type_by_year = df_filtered.groupby("Year")["Molecule_Types"].value_counts(normalize=True) * 100
 
-print("\nMolecule Type Percentages by Year:")
-print(molecule_type_by_year)
+    return molecule_type_percentages, molecule_type_by_year
+
+
